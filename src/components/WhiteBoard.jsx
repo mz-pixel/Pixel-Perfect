@@ -1,50 +1,84 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
 
-export default function WhiteBoard(props) {
-  const downloadLogic = (params) => {
-    return params;
+export default function WhiteBoard({
+  width = 600,
+  height = 400,
+  pixelSize = 20,
+}) {
+  const canvasRef = useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const getMousePos = (event) => {
+    const rect = canvasRef.current.getBoundingClientRect();
+    return {
+      x: Math.floor((event.clientX - rect.left) / pixelSize),
+      y: Math.floor((event.clientY - rect.top) / pixelSize),
+    };
   };
-  const { draw, ...rest } = props;
-  const { scale, ...propsWithoutScale } = rest;
 
-  const canvasRef = useRef();
+  const drawPixel = (ctx, x, y) => {
+    ctx.fillStyle = "#000";
+    ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+  };
+
+  const handleMouseDown = (e) => {
+    const ctx = canvasRef.current.getContext("2d");
+    const pos = getMousePos(e);
+    drawPixel(ctx, pos.x, pos.y);
+    setMousePos(pos);
+    setIsDrawing(true);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDrawing) return;
+    const ctx = canvasRef.current.getContext("2d");
+    const pos = getMousePos(e);
+    if (pos.x !== mousePos.x || pos.y !== mousePos.y) {
+      drawPixel(ctx, pos.x, pos.y);
+      setMousePos(pos);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDrawing(false);
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
-    let frameCount = 0;
-    let animationFrameId;
-    const render = () => {
-      // increases frame count on a sin function to create an oscillating effect on the circle
-      frameCount++;
-      draw(context, frameCount);
-      animationFrameId = window.requestAnimationFrame(render);
-    };
-    render();
+    canvas.width = width;
+    canvas.height = height;
 
-    return () => {
-      // need to clear animation if the component isnt being rendered
-      window.cancelAnimationFrame(animationFrameId);
-    };
-  }, [draw]);
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Optional: Draw grid
+    ctx.strokeStyle = "#e5e7eb"; // Tailwind gray-200
+    for (let x = 0; x < width; x += pixelSize) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, height);
+      ctx.stroke();
+    }
+    for (let y = 0; y < height; y += pixelSize) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(width, y);
+      ctx.stroke();
+    }
+  }, [width, height, pixelSize]);
 
   return (
-    <div className="canvas-holder">
-      <div className="topbar">
-        <button className="download-button" onClick={downloadLogic}>
-          Download
-        </button>
-      </div>
-      <p>this is the last test</p>
-      {/* <div className="container size-fit m-8 p-8 bg-white"> */}
-      <div className="container size-fit m-8 p-8 bg-red-700">
-        <canvas
-          id="canvas"
-          className="cursor-none bg-amber-300"
-          ref={canvasRef}
-          {...propsWithoutScale}
-        ></canvas>
-      </div>
+    <div className="flex justify-center items-center p-4">
+      <canvas
+        ref={canvasRef}
+        className="border-2 border-gray-400 cursor-crosshair shadow-lg rounded"
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+      />
     </div>
   );
 }

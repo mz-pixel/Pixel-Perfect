@@ -3,7 +3,7 @@ import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
-    <div class="min-h-screen">
+    <div className="min-h-screen">
       <Dashboard />
     </div>
   );

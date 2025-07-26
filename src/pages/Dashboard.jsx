@@ -2,36 +2,36 @@ import React from "react";
 import WhiteBoard from "../components/WhiteBoard";
 
 export default function Dashboard() {
-  const [mouseDown, setMouseDown] = React.useState(false);
+  // const [mouseDown, setMouseDown] = React.useState(false);
   const [scale, setScale] = React.useState(1);
-  const draw = (ctx, frameCount) => {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.fillStyle = "#000000";
-    ctx.beginPath();
-    ctx.arc(50, 100, 20 * Math.sin(frameCount * 0.05) ** 2, 0, 2 * Math.PI);
-    ctx.fill();
-  };
+  // const draw = (ctx, frameCount) => {
+  //   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  //   ctx.fillStyle = "#000000";
+  //   ctx.beginPath();
+  //   ctx.arc(50, 100, 20 * Math.sin(frameCount * 0.05) ** 2, 0, 2 * Math.PI);
+  //   ctx.fill();
+  // };
 
-  const handleMouseDown = (e) => {
-    console.log("Mouse down event:", e);
-    console.log("Mouse down at", e.clientX, e.clientY);
-    setMouseDown(true);
-    console.log("Mouse down state:", mouseDown);
-  };
+  // const handleMouseDown = (e) => {
+  //   console.log("Mouse down event:", e);
+  //   console.log("Mouse down at", e.clientX, e.clientY);
+  //   setMouseDown(true);
+  //   console.log("Mouse down state:", mouseDown);
+  // };
 
-  const handleMouseUp = () => {
-    console.log("Mouse up");
+  // const handleMouseUp = () => {
+  //   console.log("Mouse up");
 
-    setMouseDown(false);
-    console.log("Mouse down state:", mouseDown);
-  };
+  //   setMouseDown(false);
+  //   console.log("Mouse down state:", mouseDown);
+  // };
 
-  const handleMouseEnter = (e) => {
-    console.log("Mouse enter event:", e);
-    if (!mouseDown) {
-      console.log("Mouse entered while not pressed");
-    }
-  };
+  // const handleMouseEnter = (e) => {
+  //   console.log("Mouse enter event:", e);
+  //   if (!mouseDown) {
+  //     console.log("Mouse entered while not pressed");
+  //   }
+  // };
 
   return (
     <div className="min-h-screen flex flex-row">
@@ -45,14 +45,14 @@ export default function Dashboard() {
               name="scale"
               min="1"
               max="100"
-              step={(scale + 1) ** 2}
+              step="1"
               value={scale}
               onChange={(e) => setScale(e.target.value)}
             />
           </form>
         </div>
       </div>
-      <WhiteBoard
+      {/* <WhiteBoard
         draw={draw}
         onMouseEnter={handleMouseEnter}
         onMouseDown={handleMouseDown}
@@ -64,7 +64,17 @@ export default function Dashboard() {
         pixelSize={10}
         className="cursor-none bg-amber-300"
         style={{ width: "1280px", height: "720px" }}
-      />
+      /> */}
+      <div className="flex-1">
+        <WhiteBoard
+          // onMouseDown={handleMouseDown}
+          // onMouseUp={handleMouseUp}
+          // onMouseEnter={handleMouseEnter}
+          // mouseDown={mouseDown}
+          // scale={scale}
+          className="cursor-none bg-amber-300"
+        />
+      </div>
     </div>
   );
 }
