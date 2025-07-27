@@ -1,9 +1,9 @@
 import React, { useRef, useEffect, useState } from "react";
 
 export default function WhiteBoard({
-  width = 600,
-  height = 400,
-  pixelSize = 20,
+  width = 1280,
+  height = 720,
+  pixelSize = 10,
 }) {
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -33,11 +33,13 @@ export default function WhiteBoard({
   const handleMouseMove = (e) => {
     if (!isDrawing) return;
     const ctx = canvasRef.current.getContext("2d");
-    const pos = getMousePos(e);
-    if (pos.x !== mousePos.x || pos.y !== mousePos.y) {
-      drawPixel(ctx, pos.x, pos.y);
-      setMousePos(pos);
-    }
+    const currentPos = getMousePos(e);
+    if (currentPos.x === mousePos.x && currentPos.y === mousePos.y) return; // No movement
+    const dx = currentPos.x - mousePos.x;
+    const dy = currentPos.y - mousePos.y;
+
+    drawPixel(ctx, pos.x, pos.y);
+    setMousePos(pos);
   };
 
   const handleMouseUp = () => {
